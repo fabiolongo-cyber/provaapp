@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "AggregatorLite",
+    "slug": "aggregatorlite",
+    "version": "0.1.0",
+    "platforms": ["android"],
+    "android": {
+      "package": "com.tuo.nome.aggregatorlite"
+    }
+  }
+}
