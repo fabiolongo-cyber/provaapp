@@ -6,6 +6,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -18,19 +20,18 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
-      - name: Login to Expo by token
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      - name: Verify EXPO_TOKEN present
         run: |
-          echo "Logging in to Expo"
-          eas login --token "$EXPO_TOKEN"
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "EXPO_TOKEN not set"
+            exit 1
+          fi
+          echo "EXPO_TOKEN is set (hidden)."
 
       - name: Run EAS build (android apk)
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
+          # EAS sees EXPO_TOKEN from environment; no explicit login required
           eas build -p android --profile production --non-interactive
