@@ -1,4 +1,4 @@
-name: EAS Build APK
+name: EAS Build APK (try init)
 
 on:
   workflow_dispatch:
@@ -18,7 +18,7 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm install --no-audit --no-fund || true
 
       - name: Install EAS CLI
         run: npm install -g eas-cli
@@ -31,7 +31,15 @@ jobs:
           fi
           echo "EXPO_TOKEN is set (hidden)."
 
+      - name: Try non-interactive eas init
+        run: |
+          # attempt to initialize project non-interactively; may fail but we'll continue
+          set -e
+          npx eas-cli@latest init --non-interactive --yes || echo "eas init non-interactive failed (continuing)"
+
+      - name: Show repo files for debug
+        run: ls -la
+
       - name: Run EAS build (android apk)
         run: |
-          # EAS sees EXPO_TOKEN from environment; no explicit login required
           eas build -p android --profile production --non-interactive
